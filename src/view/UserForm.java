@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import java.util.Scanner;
@@ -16,10 +11,6 @@ import infra.UserRepository;
 import infra.UserRepository.PersistOperationException;
 import infra.UserRepository.UserNotFoundException;
 
-/**
- *
- * @author aluno
- */
 public class UserForm
 {
 	private UserManager users;
@@ -56,7 +47,7 @@ public class UserForm
             case 3: return;
             
             default:
-                System.out.println("Erro: op��o inv�lida.");
+                System.out.println("Erro: opção inválida.");
                 menuBegin();
                 return;
         }
@@ -99,7 +90,7 @@ public class UserForm
             	break;
             
             default:
-                System.out.println("Erro: op��o inv�lida.");
+                System.out.println("Erro: opção inválida.");
         }
         
         menuList();
@@ -109,7 +100,7 @@ public class UserForm
     {
     	if (login == null)
     	{
-    		System.out.print("\nCreate user (enter empty to return):\n\tLogin: ");
+    		System.out.print("\nCriar usuário (entre vazio para sair):\n\tLogin: ");
     		login = this.in.next();
     	}
     	
@@ -138,7 +129,7 @@ public class UserForm
     
     private void removeUser()
     {
-    	System.out.print("\nRemove user (enter empty to return):\n\tLogin: ");
+    	System.out.print("\nRemover usuário (entre vazio para sair):\n\tLogin: ");
 		String login = this.in.next();
     	
     	if (login.trim().isEmpty())

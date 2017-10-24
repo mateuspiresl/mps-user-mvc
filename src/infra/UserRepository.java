@@ -41,7 +41,7 @@ public class UserRepository {
         } 
         catch(IOException | ClassNotFoundException ioe) {
             ioe.printStackTrace();    
-            throw new PersistOperationException("Erro ao tentar recuperar informaÁıes");            
+            throw new PersistOperationException("Erro ao tentar recuperar informa√ß√µes");            
         }       
         
         return instance;
@@ -49,7 +49,7 @@ public class UserRepository {
     
     public void addUser(User user) throws UserAlreadyAddedException {
         if (this.dataSet.containsKey(user.getLogin())) {
-            throw new UserAlreadyAddedException("Usu·rio existente");
+            throw new UserAlreadyAddedException("Usu√°rio existente");
         } else {
             this.dataSet.put(user.getLogin(), user);            
         }        
@@ -59,7 +59,7 @@ public class UserRepository {
         if (this.dataSet.containsKey(login)) {
             this.dataSet.remove(login);            
         } else {
-            throw new UserNotFoundException("Usu·rio n„o encontrado");
+            throw new UserNotFoundException("Usu√°rio n√£o encontrado");
         }        
     }
     
@@ -80,7 +80,7 @@ public class UserRepository {
         } 
         catch(IOException ioe) {
             ioe.printStackTrace();    
-            throw new PersistOperationException("Erro ao tentar salvar informaÁıes");            
+            throw new PersistOperationException("Erro ao tentar salvar informa√ß√µes");            
         }       
         
         return true;

@@ -15,67 +15,47 @@ public class UserManager {
         this.repository = repository;
     }
     
-    public void addUser(final User user) throws InvalidLoginException, InvalidPasswordException, UserRepository.UserAlreadyAddedException {
+    public void addUser(final User user) throws InvalidLoginException, InvalidPasswordException, UserRepository.UserAlreadyAddedException
+    {
+    	validateLogin(user.getLogin());
+    	validatePassword(user.getPassword());
         
-        final String login = user.getLogin();
-        final String password = user.getPassword();
-               
-        if (validateLogin(login) && validatePassword(password)) {
-            try {
-                repository.addUser(user);                
-            } catch(UserRepository.UserAlreadyAddedException e) {
-                throw e;
-            }         
-        }
-        
+    	repository.addUser(user);
     }
         
     public void deleteUser(final String login) throws UserRepository.UserNotFoundException {
-        try {
-            repository.deleteUser(login);
-        } catch(UserRepository.UserNotFoundException e) {
-            throw e;
-        }               
+        repository.deleteUser(login);    
     }
     
     public void save() throws UserRepository.PersistOperationException {
-        try {
-            repository.persist();
-        } catch(UserRepository.PersistOperationException e) {
-            throw e;
-        }
-        
+        repository.persist();
     }
     
-    private boolean validateLogin(String login) throws InvalidLoginException {
-        if (login.matches("\\d")) {            
-            throw new InvalidLoginException("O login não pode conter numéricos");
-        } 
-        else if (login.isEmpty()) {
-            throw new InvalidLoginException("O login não pode ser vazio");
-        }
-        else if (login.length() > MAX_LOGIN_LENGTH) {
-            throw new InvalidLoginException("O login não pode conter mais que 12 caracteres");
-        }        
+    private void validateLogin(String login) throws InvalidLoginException
+    {
+        if (login.matches(".*\\d.*"))            
+            throw new InvalidLoginException("O login nÃ£o pode conter numÃ©ricos");
         
-        return true;
+        else if (login.isEmpty())
+            throw new InvalidLoginException("O login nÃ£o pode ser vazio");
+        
+        else if (login.length() > MAX_LOGIN_LENGTH)
+            throw new InvalidLoginException("O login nÃ£o pode conter mais que 12 caracteres");
     }
     
-    private boolean validatePassword(String password) throws InvalidPasswordException {
-            
+    private void validatePassword(String password) throws InvalidPasswordException
+    {
         if (password.length() > MAX_PASSWORD_LENGTH) {
-            final String message = String.format("A senha não pode ter mais que %d caracteres", MAX_PASSWORD_LENGTH);
+            final String message = String.format("A senha nÃ£o pode ter mais que %d caracteres", MAX_PASSWORD_LENGTH);
             throw new InvalidPasswordException(message);
         }
-        else if (password.length() > MIN_PASSWORD_LENGTH) {
-            final String message = String.format("A senha não pode ter menos que %d caracteres", MIN_PASSWORD_LENGTH);
+        else if (password.length() < MIN_PASSWORD_LENGTH) {
+            final String message = String.format("A senha nÃ£o pode ter menos que %d caracteres", MIN_PASSWORD_LENGTH);
             throw new InvalidPasswordException(message);
         }
-        else if (!password.matches("^((\\D*\\d+){2}.*)$")) {            
-            throw new InvalidPasswordException("A senha deve possuir pelo menos 2 digitos numéricos");
+        else if (!password.matches("^((\\D*\\d+){2}.*)$")) {
+            throw new InvalidPasswordException("A senha deve possuir pelo menos 2 digitos numÃ©ricos");
         }
-                
-        return true;
     }
     
     public class InvalidLoginException extends Exception {
@@ -84,7 +64,6 @@ public class UserManager {
 		public InvalidLoginException(String message) {
             super(message);
         }
-        
     }
     
     public class InvalidPasswordException extends Exception {
@@ -93,7 +72,6 @@ public class UserManager {
 		public InvalidPasswordException(String message) {
             super(message);
         }
-        
     }
     
 }
