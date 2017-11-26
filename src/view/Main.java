@@ -2,8 +2,7 @@ package view;
 
 public class Main
 {
-	public static void main(String[] args)
-    {
-        new MainView().menu();
+	public static void main(String[] args) {
+        new MainView().show();
     }
 }

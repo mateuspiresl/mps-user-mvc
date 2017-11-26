@@ -3,8 +3,10 @@ package business.control;
 import java.util.List;
 
 import business.model.Message;
+import business.model.Wall;
 import exceptions.InvalidMessageException;
 import exceptions.PersistOperationException;
+import exceptions.WallExistsException;
 import infra.WallRepository;
 
 public class WallManager
@@ -17,14 +19,26 @@ public class WallManager
         this.repository = repository;
     }
     
-    public void add(final Message message) throws InvalidMessageException
-    {
-    	validateMessage(message);
-    	this.repository.add(message);
+    public void addWall(String name) throws WallExistsException {
+    	this.repository.add(new Wall(name));
     }
     
-    public List<Message> list() {
+    public boolean hasWall(String name) {
+    	return this.repository.has(name);
+    }
+    
+    public void addMessage(String wall, final Message message) throws InvalidMessageException
+    {
+    	validateMessage(message);
+    	this.repository.get(wall).add(message);
+    }
+    
+    public List<String> listWalls() {
     	return this.repository.list();
+    }
+    
+    public List<Message> listMessages(String wall) {
+    	return this.repository.get(wall).list();
     }
     
     public void save() throws PersistOperationException {

@@ -2,12 +2,10 @@ package infra;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import business.model.Message;
 import business.model.User;
+import business.model.Wall;
 import exceptions.PersistOperationException;
 import util.FileInputAdapter;
 import util.FileOutputAdapter;
@@ -71,7 +69,7 @@ public class DataRepository implements RepositoryPersistence, RepositoryProvider
     
 	@Override
     public WallRepository getWallRepository() {
-    	return new WallRepository(this.data.wall, this);
+    	return new WallRepository(this.data.walls, this);
     }
     
     private static class Data implements Serializable
@@ -79,12 +77,12 @@ public class DataRepository implements RepositoryPersistence, RepositoryProvider
 		private static final long serialVersionUID = 2857304693211579433L;
 		
 		private HashMap<String, User> users;
-    	private List<Message> wall;
+    	private HashMap<String, Wall> walls;
     	
     	Data()
     	{
     		this.users = new HashMap<>();
-    		this.wall = new ArrayList<>();
+    		this.walls = new HashMap<>();
     	}
     }
 }

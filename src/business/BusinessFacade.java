@@ -14,18 +14,20 @@ import exceptions.InvalidPasswordException;
 import exceptions.PersistOperationException;
 import exceptions.UserAlreadyAddedException;
 import exceptions.UserNotFoundException;
+import exceptions.WallExistsException;
+import exceptions.WallNotFoundException;
 import infra.RepositoryFactory;
 import infra.RepositoryProvider;
 
 public class BusinessFacade
 {
 	private UserManager users;
-	private WallManager wall;
+	private WallManager walls;
 	
 	private void initializeManagers(RepositoryProvider repository)
 	{
 		this.users = new UserManager(repository.getUserRepository());
-		this.wall = new WallManager(repository.getWallRepository());
+		this.walls = new WallManager(repository.getWallRepository());
 	}
 	
 	public void create()
@@ -44,7 +46,8 @@ public class BusinessFacade
 		initializeManagers(RepositoryFactory.load());
 	}
 	
-	public void addUser(String name, String password) throws InvalidLoginException, InvalidPasswordException, UserAlreadyAddedException, PersistOperationException
+	public void addUser(String name, String password) throws InvalidLoginException, InvalidPasswordException,
+			UserAlreadyAddedException, PersistOperationException
 	{
 		this.users.add(new User(name, password));
 		this.users.save();
@@ -56,14 +59,26 @@ public class BusinessFacade
 		this.users.save();
 	}
 	
-	public void addMessage(String name, String password, String message) throws InvalidMessageException, PersistOperationException, UserNotFoundException, InvalidPasswordException
-	{
-		User user = this.users.match(name, password);
-		this.wall.add(MessageFactory.create(user, message));
-		this.wall.save();
+	public List<String> listWalls() {
+		return this.walls.listWalls();
 	}
 	
-	public List<Message> listMessages() {
-		return this.wall.list();
+	public void addWall(String name) throws WallExistsException {
+		this.walls.addWall(name);
+	}
+	
+	public void addMessage(String wall, String name, String password, String message)
+			throws InvalidMessageException, PersistOperationException, UserNotFoundException, InvalidPasswordException,
+			WallNotFoundException
+	{
+		if (!this.walls.hasWall(name)) throw new WallNotFoundException();
+		
+		User user = this.users.match(name, password);
+		this.walls.addMessage(wall, MessageFactory.create(user, message));
+		this.walls.save();
+	}
+	
+	public List<Message> listMessages(String wall) {
+		return this.walls.listMessages(wall);
 	}
 }
