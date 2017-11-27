@@ -7,6 +7,7 @@ import java.util.Map;
 import business.model.Wall;
 import exceptions.PersistOperationException;
 import exceptions.WallExistsException;
+import exceptions.WallNotFoundException;
 
 public class WallRepository implements RepositoryPersistence
 {	
@@ -27,12 +28,22 @@ public class WallRepository implements RepositoryPersistence
         this.data.put(wall.getName(), wall);
     }
     
-    public Wall get(String name) {
+    public Wall get(String name) throws WallNotFoundException
+    {
+    	if (!has(name)) throw new WallNotFoundException();
     	return this.data.get(name);
     }
     
     public boolean has(String name) {
     	return this.data.containsKey(name);
+    }
+    
+    public Wall remove(String name) throws WallNotFoundException
+    {
+    	Wall removed = this.data.remove(name);
+    	
+    	if (removed == null) throw new WallNotFoundException();
+    	return removed;
     }
     
     public List<String> list() {

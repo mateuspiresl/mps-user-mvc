@@ -1,6 +1,6 @@
 package exceptions;
 
-public class WallNotFoundException extends RuntimeException {
+public class WallNotFoundException extends WallException {
 	private static final long serialVersionUID = 582777763232008995L;
 
 	public WallNotFoundException(String message) {
@@ -8,6 +8,6 @@ public class WallNotFoundException extends RuntimeException {
 	}
 	
 	public WallNotFoundException() {
-		super();
+		super("Mural não encontrado");
 	}
 }

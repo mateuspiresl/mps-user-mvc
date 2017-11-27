@@ -1,4 +1,4 @@
-package business;
+package business.control;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,6 +8,7 @@ import business.control.WallManager;
 import business.model.CommonMessage;
 import business.model.Message;
 import business.model.VipMessage;
+import business.model.Wall;
 import infra.RepositoryFactory;
 
 public class WallManagerTest
@@ -24,7 +25,7 @@ public class WallManagerTest
 		Message m1 = new CommonMessage(u1, t1);
 		Message m2 = new VipMessage(u2, t2);
 		
-		wall.addWall(w1);
+		wall.addWall(new Wall(w1));
 		
 		wall.addMessage(w1, m1);
 		assertEquals(1, wall.listMessages(w1).size());
@@ -48,7 +49,7 @@ public class WallManagerTest
 		Message m1 = new CommonMessage(u1, t1);
 		Message m2 = new VipMessage(u2, t2);
 		
-		wall.addWall(w1);
+		wall.addWall(new Wall(w1));
 		
 		System.out.println("Adding a message, size should be 1");
 		wall.addMessage(w1, m1);
@@ -57,7 +58,7 @@ public class WallManagerTest
 		System.out.println("Repository unload");
 		RepositoryFactory.reset();
 		wall = new WallManager(RepositoryFactory.load().getWallRepository());
-		wall.addWall(w1);
+		wall.addWall(new Wall(w1));
 		
 		System.out.println("Adding a message, size should be 1");
 		wall.addMessage(w1, m2);

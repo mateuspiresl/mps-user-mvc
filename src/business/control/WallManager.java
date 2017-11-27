@@ -7,6 +7,7 @@ import business.model.Wall;
 import exceptions.InvalidMessageException;
 import exceptions.PersistOperationException;
 import exceptions.WallExistsException;
+import exceptions.WallNotFoundException;
 import infra.WallRepository;
 
 public class WallManager
@@ -19,15 +20,36 @@ public class WallManager
         this.repository = repository;
     }
     
-    public void addWall(String name) throws WallExistsException {
-    	this.repository.add(new Wall(name));
+    public void addWall(Wall wall) throws WallExistsException {
+    	this.repository.add(wall);
+    }
+    
+    public Wall getWall(String name) throws WallNotFoundException {
+    	return this.repository.get(name);
     }
     
     public boolean hasWall(String name) {
     	return this.repository.has(name);
     }
     
-    public void addMessage(String wall, final Message message) throws InvalidMessageException
+    public void updateWall(String which, String name, String description) throws WallNotFoundException
+    {
+    	if (name == null && description == null) return;
+    	
+    	Wall wall = this.repository.remove(which);
+    	
+    	if (name != null) wall.setName(name);
+    	if (description != null) wall.setDescription(description);
+    	
+    	try { this.repository.add(wall); }
+    	catch (WallExistsException e) { }
+    }
+    
+    public Wall removeWall(String name) throws WallNotFoundException {
+    	return this.repository.remove(name);
+    }
+    
+    public void addMessage(String wall, final Message message) throws InvalidMessageException, WallNotFoundException
     {
     	validateMessage(message);
     	this.repository.get(wall).add(message);
@@ -37,7 +59,7 @@ public class WallManager
     	return this.repository.list();
     }
     
-    public List<Message> listMessages(String wall) {
+    public List<Message> listMessages(String wall) throws WallNotFoundException {
     	return this.repository.get(wall).list();
     }
     

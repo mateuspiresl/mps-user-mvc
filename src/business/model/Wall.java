@@ -9,11 +9,14 @@ public class Wall implements Serializable
 {
 	private static final long serialVersionUID = -8132608403753910011L;
 	
-	private final String name;
-	private final List<Message> messages = new ArrayList<Message>();
+	private String name, description;
+	private List<Message> messages = new ArrayList<Message>();
 	
-	public Wall(String name) {
+	public Wall(String name)
+	{
 		this.name = name;
+		this.description = "";
+		this.messages = new ArrayList<Message>();
 	}
 	
 	public void add(Message message) {
@@ -26,5 +29,17 @@ public class Wall implements Serializable
 	
 	public String getName() {
 		return this.name;
+	}
+	
+	public String getDescription() {
+		return this.description;
+	}
+	
+	public void setName(String name) {
+		this.name= name;
+	}
+	
+	public void setDescription(String text) {
+		this.description = text;
 	}
 }

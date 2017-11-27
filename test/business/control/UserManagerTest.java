@@ -1,4 +1,4 @@
-package business;
+package business.control;
 
 import static org.junit.Assert.fail;
 

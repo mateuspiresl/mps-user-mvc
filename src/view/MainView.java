@@ -5,13 +5,13 @@ import java.util.Scanner;
 import business.BusinessFacade;
 import exceptions.ActionCanceledException;
 import exceptions.PersistOperationException;
-import exceptions.WallExistsException;
+import exceptions.WallException;
 import util.Menu;
 
 public class MainView
 {
     Scanner in;
-    BusinessFacade facade = new BusinessFacade();
+    BusinessFacade facade;
     
     public void show()
     {
@@ -44,8 +44,8 @@ public class MainView
         
         switch (option)
         {
-            case 1: this.facade.create(); break;
-            case 2: this.facade.load(); break;
+            case 1: this.facade = new BusinessFacade(BusinessFacade.CREATE); break;
+            case 2: this.facade = new BusinessFacade(BusinessFacade.LOAD); break;
             case 0: return;
         }
     }
@@ -65,7 +65,7 @@ public class MainView
     		case 0: return;
     		}    		
     	}
-    	catch (WallExistsException | ActionCanceledException e) {
+    	catch (ActionCanceledException | WallException e) {
     		System.out.println(e.getMessage());
     	}
     	

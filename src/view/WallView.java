@@ -2,13 +2,15 @@ package view;
 
 import java.util.List;
 
+import business.BusinessFacade;
 import business.model.Message;
 import exceptions.ActionCanceledException;
 import exceptions.InvalidMessageException;
 import exceptions.InvalidPasswordException;
 import exceptions.PersistOperationException;
 import exceptions.UserNotFoundException;
-import exceptions.WallExistsException;
+import exceptions.WallException;
+import exceptions.WallNotFoundException;
 import util.Menu;
 
 public class WallView
@@ -22,7 +24,7 @@ public class WallView
 		this.wall = wall;
 	}
 	
-	public static void createWall(MainView parent) throws WallExistsException
+	public static void createWall(MainView parent) throws WallException
 	{
 		System.out.print("\nCriar mural (entre 'x' para sair):\n\tNome: ");
 		String name = null;
@@ -32,7 +34,7 @@ public class WallView
 		
 		if (name.trim().toLowerCase().equals("x")) throw new ActionCanceledException();
     	
-    	parent.facade.addWall(name);
+    	parent.facade.wallService(BusinessFacade.WALL_CREATE, name);
 	}
 	
 	public static void openWall(MainView parent)
@@ -52,43 +54,79 @@ public class WallView
 		}
 	}
 	
-	public void menu()
+	private void menu()
     {
-    	int option = new Menu(this.parent.in, "Menu do mural " + this.wall)
+		Menu menu = new Menu(this.parent.in, "Menu do mural " + this.wall)
     			.option("Ver mensagens").option("Adicionar mensagem")
-    			.exit().show();
+    			.option("Editar mural").option("Apagar mural");
+		
+		if (this.parent.facade.hasWallUndo())
+			menu.option("Desfazer última ação");
+		
+    	int option = menu.exit().show();
         
     	try {
     		switch (option)
     		{
-    		case 1: list(); break;
-    		case 2: create(); break;
+    		case 1: listMessages(); break;
+    		case 2: createMessage(); break;
+    		case 3: updateWall(); break;
+    		case 4: removeWall(); break;
+    		case 5: undo(); break;
     		case 0: return;
     		}
     	}
     	catch (InvalidMessageException | PersistOperationException | ActionCanceledException
-    			| UserNotFoundException | InvalidPasswordException e) {
+    			| UserNotFoundException | InvalidPasswordException | WallException e) {
     		System.out.println(e.getMessage());
     	}
         
         menu();
     }
 	
-	public void list()
+	private void updateWall() throws WallException
+	{
+		System.out.println(String.format("Editando o mural %s (enter 'x' to ignore a field):", this.wall));
+		String name, description;
+		
+		System.out.print("\n\tNome: ");
+		do name = this.parent.in.next(); while (name.isEmpty());
+		if (name.trim().toLowerCase().equals("x")) name = null;
+		
+		System.out.print("\n\tDescrição: ");
+		do description = this.parent.in.next(); while (description.isEmpty());
+		if (description.trim().toLowerCase().equals("x")) description = null;
+		
+		if (name == null && description == null) throw new ActionCanceledException();
+		
+		this.parent.facade.wallService(BusinessFacade.WALL_UPDATE, new String[] {
+				this.wall, name, description
+		});
+	}
+	
+	private void removeWall() throws WallException {
+		this.parent.facade.wallService(BusinessFacade.WALL_REMOVE, this.wall);
+	}
+	
+	private void undo() throws WallException {
+		this.parent.facade.wallUndo();
+	}
+	
+	private void listMessages() throws WallNotFoundException
 	{
 		List<Message> messages = this.parent.facade.listMessages(this.wall);
 		
 		if (messages.size() > 0) {
-			System.out.println("\nMural:");
+			System.out.println("\nMensagens:");
 			messages.forEach(message -> System.out.println(message));
 		}
 		else {
-			System.out.println("\nMural: VAZIO.");
+			System.out.println("\nMensagens: VAZIO.");
 		}
 	}
 	
-	public void create() throws InvalidMessageException, PersistOperationException, UserNotFoundException,
-		InvalidPasswordException, ActionCanceledException
+	private void createMessage() throws InvalidMessageException, PersistOperationException, UserNotFoundException,
+		InvalidPasswordException, ActionCanceledException, WallNotFoundException
 	{
 		String[] credencials = new UserView(this.parent).getCredencials();
 		if (credencials != null)
