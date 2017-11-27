@@ -4,16 +4,12 @@ import exceptions.PersistOperationException;
 
 public class RepositoryFactory
 {
-	public static RepositoryProvider create()
-	{
-		RepositoryProvider provider = DataRepository.getInstance();
-		return provider == null ? new DataRepository() : provider;
+	public static RepositoryProvider create() {
+		return new DataRepository();
 	}
 	
-	public static RepositoryProvider load() throws PersistOperationException
-	{
-		RepositoryProvider provider = DataRepository.getInstance();
-		return provider == null ? DataRepository.load() : provider;
+	public static RepositoryProvider load() throws PersistOperationException {
+		return DataRepository.load();
 	}
 	
 	@ForTestsOnly
